@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { withRouter } from "react-router-dom";
 import { Mutation } from "react-apollo";
 import { SIGNUP_USER } from "../../queries";
 import Error from "../Error";
@@ -26,10 +27,12 @@ class Signup extends Component {
 
   handleSubmit = (e, signupUser) => {
     e.preventDefault();
-    signupUser().then(({ data: { signupUser } }) => {
+    signupUser().then(async ({ data: { signupUser } }) => {
       console.log(signupUser);
       localStorage.setItem("token", signupUser.token);
+      await this.props.refetch();
       this.clearState();
+      this.props.history.push("/");
     });
   };
 
@@ -101,4 +104,4 @@ class Signup extends Component {
   }
 }
 
-export default Signup;
+export default withRouter(Signup);
