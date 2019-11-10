@@ -26,8 +26,9 @@ class Signup extends Component {
 
   handleSubmit = (e, signupUser) => {
     e.preventDefault();
-    signupUser().then(data => {
-      console.log(data);
+    signupUser().then(({ data: { signupUser } }) => {
+      console.log(signupUser);
+      localStorage.setItem("token", signupUser.token);
       this.clearState();
     });
   };
@@ -52,6 +53,7 @@ class Signup extends Component {
             return (
               <form
                 className="form"
+                method="POST"
                 onSubmit={e => this.handleSubmit(e, signupUser)}
               >
                 <input
