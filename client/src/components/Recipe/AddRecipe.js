@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import { Mutation } from "react-apollo";
-import { ADD_RECIPE } from "../../queries";
+import { ADD_RECIPE, GET_ALL_RECIPES } from "../../queries";
 import Error from "../Error";
 
 const initialState = {
@@ -46,12 +46,24 @@ class AddRecipe extends Component {
     });
   };
 
+  updateCache = (cache, { data: { addRecipe } }) => {
+    // Reads GQL query from root query id
+    const { getAllRecipes } = cache.readQuery({ query: GET_ALL_RECIPES });
+    cache.writeQuery({
+      query: GET_ALL_RECIPES,
+      data: {
+        getAllRecipes: [addRecipe, ...getAllRecipes]
+      }
+    });
+  };
+
   render() {
     const { name, category, description, instructions, username } = this.state;
     return (
       <Mutation
         mutation={ADD_RECIPE}
         variables={{ name, category, description, instructions, username }}
+        update={this.updateCache}
       >
         {(addRecipe, { data, loading, error }) => {
           return (
