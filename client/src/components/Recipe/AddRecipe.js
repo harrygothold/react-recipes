@@ -1,51 +1,101 @@
-import React, { useState } from "react";
+import React, { Component } from "react";
+import { Mutation } from "react-apollo";
+import { ADD_RECIPE } from "../../queries";
+import Error from "../Error";
 
-const AddRecipe = () => {
-  const [recipeData, setRecipeData] = useState({
+class AddRecipe extends Component {
+  state = {
     name: "",
     category: "Breakfast",
     description: "",
-    instructions: ""
-  });
+    instructions: "",
+    username: ""
+  };
 
-  const handleChange = e =>
-    setRecipeData({
-      ...recipeData,
+  componentDidMount() {
+    console.log(this.props);
+    this.setState({
+      username: this.props.session.getCurrentUser.username
+    });
+  }
+
+  handleChange = e =>
+    this.setState({
       [e.target.name]: e.target.value
     });
 
-  const { name, category, description, instructions } = recipeData;
+  validateForm = () => {
+    const { name, category, description, instructions } = this.state;
+    const isInvalid = !name || !category || !description || !instructions;
+    return isInvalid;
+  };
 
-  return (
-    <div className="App">
-      <h2 className="App">Add Recipe</h2>
-      <form className="form">
-        <input type="text" name="name" value={name} onChange={handleChange} />
-        <select value={category} onChange={handleChange} name="category">
-          <option value="Breakfast">Breakfast</option>
-          <option value="Lunch">Lunch</option>
-          <option value="Dinner">Dinner</option>
-          <option value="Snack">Snack</option>
-        </select>
-        <input
-          type="text"
-          value={description}
-          onChange={handleChange}
-          name="description"
-          placeholder="Add Description"
-        />
-        <textarea
-          name="instructions"
-          value={instructions}
-          onChange={handleChange}
-          placeholder="Add Instructions"
-        ></textarea>
-        <button className="button-primary" type="submit">
-          Submit
-        </button>
-      </form>
-    </div>
-  );
-};
+  handleSubmit = (e, addRecipe) => {
+    e.preventDefault();
+    addRecipe().then(({ data }) => {
+      console.log(data);
+    });
+  };
+
+  render() {
+    const { name, category, description, instructions, username } = this.state;
+    return (
+      <Mutation
+        mutation={ADD_RECIPE}
+        variables={{ name, category, description, instructions, username }}
+      >
+        {(addRecipe, { data, loading, error }) => {
+          return (
+            <div className="App">
+              <h2 className="App">Add Recipe</h2>
+              <form
+                className="form"
+                onSubmit={e => this.handleSubmit(e, addRecipe)}
+              >
+                <input
+                  type="text"
+                  name="name"
+                  value={name}
+                  onChange={this.handleChange}
+                />
+                <select
+                  value={category}
+                  onChange={this.handleChange}
+                  name="category"
+                >
+                  <option value="Breakfast">Breakfast</option>
+                  <option value="Lunch">Lunch</option>
+                  <option value="Dinner">Dinner</option>
+                  <option value="Snack">Snack</option>
+                </select>
+                <input
+                  type="text"
+                  value={description}
+                  onChange={this.handleChange}
+                  name="description"
+                  placeholder="Add Description"
+                />
+                <textarea
+                  name="instructions"
+                  value={instructions}
+                  onChange={this.handleChange}
+                  placeholder="Add Instructions"
+                ></textarea>
+                <button
+                  disabled={loading || this.validateForm()}
+                  className="button-primary"
+                  type="submit"
+                >
+                  Submit
+                </button>
+                {error && <Error error={error} />}
+              </form>
+            </div>
+          );
+        }}
+      </Mutation>
+    );
+  }
+}
 
 export default AddRecipe;
