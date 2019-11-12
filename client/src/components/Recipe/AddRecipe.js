@@ -1,19 +1,26 @@
 import React, { Component } from "react";
+import { withRouter } from "react-router-dom";
 import { Mutation } from "react-apollo";
 import { ADD_RECIPE } from "../../queries";
 import Error from "../Error";
 
+const initialState = {
+  name: "",
+  category: "Breakfast",
+  description: "",
+  instructions: "",
+  username: ""
+};
 class AddRecipe extends Component {
-  state = {
-    name: "",
-    category: "Breakfast",
-    description: "",
-    instructions: "",
-    username: ""
+  state = { ...initialState };
+
+  clearState = () => {
+    this.setState({
+      ...initialState
+    });
   };
 
   componentDidMount() {
-    console.log(this.props);
     this.setState({
       username: this.props.session.getCurrentUser.username
     });
@@ -34,6 +41,8 @@ class AddRecipe extends Component {
     e.preventDefault();
     addRecipe().then(({ data }) => {
       console.log(data);
+      this.clearState();
+      this.props.history.push("/");
     });
   };
 
@@ -98,4 +107,4 @@ class AddRecipe extends Component {
   }
 }
 
-export default AddRecipe;
+export default withRouter(AddRecipe);
