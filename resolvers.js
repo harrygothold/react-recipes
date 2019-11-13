@@ -67,6 +67,10 @@ exports.resolvers = {
       }).save();
       return newRecipe;
     },
+    deleteUserRecipe: async (root, { _id }, { Recipe }) => {
+      const recipe = await Recipe.findOneAndRemove({ _id });
+      return recipe;
+    },
     signinUser: async (root, { username, password }, { User }) => {
       const user = await User.findOne({ username });
       if (!user) {
@@ -76,7 +80,7 @@ exports.resolvers = {
       if (!isValidPassword) {
         throw new Error("Invalid password");
       }
-      return { token: createToken(user, process.env.SECRET, "1hr") };
+      return { token: createToken(user, process.env.SECRET, "2d") };
     },
     signupUser: async (root, { username, email, password }, { User }) => {
       const user = await User.findOne({ username });
@@ -88,7 +92,7 @@ exports.resolvers = {
         email,
         password
       }).save();
-      return { token: createToken(newUser, process.env.SECRET, "1hr") };
+      return { token: createToken(newUser, process.env.SECRET, "2d") };
     }
   }
 };

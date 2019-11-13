@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config({ path: "./variables.env" });
 const Recipe = require("./models/Recipe");
 const User = require("./models/User");
+const morgan = require("morgan");
 
 // Bring in graphql express middleware
 const { graphiqlExpress, graphqlExpress } = require("apollo-server-express");
@@ -32,6 +33,7 @@ const corsOptions = {
   credentials: true
 };
 app.use(cors(corsOptions));
+app.use(morgan("dev"));
 
 // Set up JWT authentication middleware
 app.use(async (req, res, next) => {
