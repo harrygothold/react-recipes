@@ -3,6 +3,7 @@ import { withRouter } from "react-router-dom";
 import { Mutation } from "react-apollo";
 import { ADD_RECIPE, GET_ALL_RECIPES } from "../../queries";
 import Error from "../Error";
+import withAuth from "../withAuth";
 
 const initialState = {
   name: "",
@@ -40,7 +41,6 @@ class AddRecipe extends Component {
   handleSubmit = (e, addRecipe) => {
     e.preventDefault();
     addRecipe().then(({ data }) => {
-      console.log(data);
       this.clearState();
       this.props.history.push("/");
     });
@@ -119,4 +119,6 @@ class AddRecipe extends Component {
   }
 }
 
-export default withRouter(AddRecipe);
+export default withAuth(session => session && session.getCurrentUser)(
+  withRouter(AddRecipe)
+);
