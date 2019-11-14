@@ -45,5 +45,7 @@ type Mutation {
     signinUser(username: String!, password: String!): Token
 
     deleteUserRecipe(_id: ID) : Recipe
+
+    likeRecipe(_id: ID!, username: String!): Recipe
 }
 `;
