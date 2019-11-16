@@ -15,7 +15,7 @@ const UserRecipes = ({ username }) => {
     );
     if (confirmDelete) {
       deleteUserRecipe().then(({ data }) => {
-        console.log(data);
+        // console.log(data);
       });
     }
   };
