@@ -15,6 +15,7 @@ const Search = () => {
         return (
           <div className="App">
             <input
+              className="search"
               type="search"
               placeholder="Search for Recipes"
               onChange={async e => {
