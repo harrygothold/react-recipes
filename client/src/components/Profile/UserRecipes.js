@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Query, Mutation } from "react-apollo";
 import {
   GET_USER_RECIPES,
@@ -10,6 +10,13 @@ import { Link } from "react-router-dom";
 import Spinner from "../Spinner";
 
 const UserRecipes = ({ username }) => {
+  const [formData, setFormData] = useState({
+    name: "",
+    imageUrl: "",
+    category: "",
+    description: ""
+  });
+  const [modal, setModal] = useState(false);
   const handleDelete = deleteUserRecipe => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this recipe?"
@@ -20,6 +27,14 @@ const UserRecipes = ({ username }) => {
       });
     }
   };
+
+  const handleChange = e =>
+    setFormData({
+      [e.target.name]: e.target.value
+    });
+
+  const closeModal = () => setModal(false);
+
   return (
     <Query query={GET_USER_RECIPES} variables={{ username }}>
       {({ data, loading, error }) => {
@@ -27,6 +42,12 @@ const UserRecipes = ({ username }) => {
         if (error) return <div>Error</div>;
         return (
           <ul>
+            {modal && (
+              <EditRecipeModal
+                closeModal={closeModal}
+                handleChange={handleChange}
+              />
+            )}
             <h3>Your Recipes</h3>
             {!data.getUserRecipes.length && (
               <p>
@@ -62,16 +83,22 @@ const UserRecipes = ({ username }) => {
                     });
                   }}
                 >
-                  {(deleteUserRecipe, attrs = {}) => {
-                    return (
+                  {(deleteUserRecipe, attrs = {}) => (
+                    <div>
+                      <button
+                        onClick={() => setModal(true)}
+                        className="button-primary"
+                      >
+                        Update
+                      </button>
                       <p
                         onClick={() => handleDelete(deleteUserRecipe)}
                         className="delete-button"
                       >
                         {attrs.loading ? "Deleting..." : "X"}
                       </p>
-                    );
-                  }}
+                    </div>
+                  )}
                 </Mutation>
               </li>
             ))}
@@ -81,5 +108,37 @@ const UserRecipes = ({ username }) => {
     </Query>
   );
 };
+
+const EditRecipeModal = ({ handleChange, closeModal }) => (
+  <div className="modal modal-open">
+    <div className="modal-inner">
+      <div className="modal-content">
+        <form className="modal-content-inner">
+          <h4>Edit Recipe</h4>
+          <label htmlFor="name">Recipe Name</label>
+          <input type="text" name="name" onChange={handleChange} />
+          <label htmlFor="imageUrl">Recipe Image</label>
+          <input type="text" name="imageUrl" onChange={handleChange} />
+          <label htmlFor="category">Category of Recipe</label>
+          <select name="category" onChange={handleChange}>
+            <option value="Breakfast">Breakfast</option>
+            <option value="Lunch">Lunch</option>
+            <option value="Dinner">Dinner</option>
+            <option value="Snack">Snack</option>
+          </select>
+          <label htmlFor="description">Recipe Description</label>
+          <input type="text" name="description" onChange={handleChange} />
+          <hr />
+          <div className="modal-buttons">
+            <button type="submit" className="button-primary">
+              Update
+            </button>
+            <button onClick={closeModal}>Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+);
 
 export default UserRecipes;
