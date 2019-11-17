@@ -136,6 +136,7 @@ class AddRecipe extends Component {
                   events={{ change: this.handleEditorChange }}
                 />
                 <button
+                  style={{ marginTop: "20px" }}
                   disabled={loading || this.validateForm()}
                   className="button-primary"
                   type="submit"

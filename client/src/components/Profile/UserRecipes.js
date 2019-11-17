@@ -7,6 +7,7 @@ import {
   GET_CURRENT_USER
 } from "../../queries";
 import { Link } from "react-router-dom";
+import Spinner from "../Spinner";
 
 const UserRecipes = ({ username }) => {
   const handleDelete = deleteUserRecipe => {
@@ -22,7 +23,7 @@ const UserRecipes = ({ username }) => {
   return (
     <Query query={GET_USER_RECIPES} variables={{ username }}>
       {({ data, loading, error }) => {
-        if (loading) return <div>Loading...</div>;
+        if (loading) return <Spinner />;
         if (error) return <div>Error</div>;
         return (
           <ul>

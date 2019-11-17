@@ -4,13 +4,14 @@ import { GET_RECIPE } from "../../queries";
 import { withRouter } from "react-router-dom";
 import Error from "../Error";
 import LikeRecipe from "./LikeRecipe";
+import Spinner from "../Spinner";
 
 const RecipePage = ({ match }) => {
   const { _id } = match.params;
   return (
     <Query query={GET_RECIPE} variables={{ _id }}>
       {({ data, loading, error }) => {
-        if (loading) return <div>Loading</div>;
+        if (loading) return <Spinner />;
         if (error) return <Error error={error} />;
         return (
           <div className="App">
